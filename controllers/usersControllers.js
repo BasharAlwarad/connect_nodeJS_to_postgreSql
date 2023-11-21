@@ -1,3 +1,4 @@
+const { validationResult } = require('express-validator');
 const pool = require('../DB/dbConnection.js');
 
 // GET all users
@@ -26,6 +27,12 @@ const getOneUser = async (req, res) => {
 
 // POST create a new user
 const createOneUser = async (req, res) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   const { first_name, last_name, age } = req.body;
   try {
     const result = await pool.query(
